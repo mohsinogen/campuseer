@@ -10,6 +10,7 @@ import connectDB from './config/db.js'
 // routes
 import adminRoutes from './routes/adminRoutes.js'
 import studentRoutes from './routes/studentRoutes.js'
+import attendanceRoutes from './routes/attendanceRoutes.js'
 
 // initialization 
 dotenv.config()
@@ -24,6 +25,7 @@ if (process.env.NODE_ENV === 'development') {
 // urls
 app.use('/api/admin', adminRoutes)
 app.use('/api/student',studentRoutes)
+app.use('/api/attendance',attendanceRoutes)
 
 const __dirname = path.resolve()
 
