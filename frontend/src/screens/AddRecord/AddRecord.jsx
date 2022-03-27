@@ -57,7 +57,6 @@ function AddRecord() {
         alert("Something went wrong!")
         })
     }
-    
   }
 
   return (
