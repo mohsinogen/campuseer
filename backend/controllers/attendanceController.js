@@ -30,7 +30,7 @@ const markAttendance = asyncHandler(async (req, res) => {
 });
 
 const attendanceList = asyncHandler(async (req, res) => {
-  let filterOpt = { isPresent: true };
+  let filterOpt = { isPresent: true, day:moment().format("L") };
   let popFilter = { path: "student" };
   //console.log(req.body.query);
   try {

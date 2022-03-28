@@ -35,7 +35,7 @@ function AttendanceList() {
     course: "",
     year: "",
     sem: "",
-    day: "",
+    day: new Date().getTime(),
   });
 
   const adminLogin = useSelector((state) => state.adminLogin);
@@ -122,7 +122,7 @@ function AttendanceList() {
           </CCol>
          
           <CCol>
-          <DatePicker className="form-control d-flex" value={new Date().getTime()} selected={new Date().getTime()} onChange={(date) => setFilter({...filter,day:date})} />
+          <DatePicker className="form-control d-flex" value={filter.day} selected={filter.day} onChange={(date) => setFilter({...filter,day:date})} />
           </CCol>
           <CCol>
             <CButton
