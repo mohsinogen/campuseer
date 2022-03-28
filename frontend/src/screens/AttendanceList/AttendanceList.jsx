@@ -168,7 +168,7 @@ function AttendanceList() {
             <CTable hover bordered>
               <CTableHead>
                 <CTableRow>
-                  {["Sr No", "Name", "Course", "Year", "Sem", "Day"].map(
+                  {["Sr No","ID", "Name", "Course", "Year", "Sem", "Day"].map(
                     (item, i) => (
                       <CTableHeaderCell key={i}>{item}</CTableHeaderCell>
                     )
@@ -180,7 +180,10 @@ function AttendanceList() {
                   <CTableRow key={i}>
                     <CTableDataCell className="fw-bold">{i + 1}</CTableDataCell>
                     <CTableDataCell className="fw-bold">
-                      <Link to={`/student/${student._id}`}>
+                      {student?.student?.studentId}
+                    </CTableDataCell>
+                    <CTableDataCell className="fw-bold">
+                      <Link to={`/student/${student?.student?._id}`}>
                         {" "}
                         {student?.student?.fullname}
                       </Link>
