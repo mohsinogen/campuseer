@@ -48,10 +48,14 @@ const Register = ( ) => {
     setMessage("");
 
     e.preventDefault();
-    if (password !== confirmPassword) {
-      setMessage("Passwords do not match");
-    } else {
-      dispatch(register(name, email, password));
+    if(name === "" || email === "" || password === "" || confirmPassword === ""){
+      alert("Fields can not be empty")
+    }else{
+      if (password !== confirmPassword) {
+        setMessage("Passwords do not match");
+      } else {
+        dispatch(register(name, email, password));
+      }
     }
   };
 
