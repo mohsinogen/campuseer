@@ -41,10 +41,10 @@ const HeaderDropdown = () => {
           Account
         </CDropdownHeader>
 
-        <CDropdownItem href="#">
+       {/*  <CDropdownItem href="#">
           <CIcon icon={cilUser} className="me-2" />
           Profile
-        </CDropdownItem>
+        </CDropdownItem> */}
 
         <CDropdownItem className="btn" onClick={logoutHandler}>
           <CIcon icon={cilExitToApp} className="me-2" />

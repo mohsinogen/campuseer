@@ -158,7 +158,7 @@ const studentList = asyncHandler(async (req, res) => {
     res.status(200).json({ students, count });
   } catch (error) {
     res.status(400);
-    throw new Error("Something went wrong");
+    throw new Error(error);
   }
 });
 

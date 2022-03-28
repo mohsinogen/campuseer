@@ -11,6 +11,7 @@ import AddRecord from "./AddRecord/AddRecord";
 import StudentList from "./StudentList/StudentList";
 import Student from "./Student/Student";
 import EditRecord from "./EditRecord/EditRecord";
+import AttendanceList from "./AttendanceList/AttendanceList";
 
 const MainContainer = () => {
   const adminLogin = useSelector((state) => state.adminLogin);
@@ -56,6 +57,14 @@ const MainContainer = () => {
         element={
           <ProtectedRoutes data={adminInfo}>
             <EditRecord />
+          </ProtectedRoutes>
+        }
+      />
+       <Route
+        path="/attendance"
+        element={
+          <ProtectedRoutes data={adminInfo}>
+            <AttendanceList />
           </ProtectedRoutes>
         }
       />

@@ -48,6 +48,10 @@ const Navbar = ({ showSidebar, setShowSidebar }) => {
               <CNavItem>
                 <CNavLink href="/studentlist">Student List</CNavLink>
               </CNavItem>
+
+              <CNavItem>
+                <CNavLink href="/attendance">Attendance List</CNavLink>
+              </CNavItem>
             
              
               <CNavItem>

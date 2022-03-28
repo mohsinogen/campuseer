@@ -1,24 +1,18 @@
 import asyncHandler from "express-async-handler";
 import Attendance from "../models/attendanceModel.js";
 import moment from "moment";
+import Student from "../models/studentModel.js";
 
-
-
-// @desc    Create a product
-// @route   POST /api/products
-// @access  Private/Admin
 const markAttendance = asyncHandler(async (req, res) => {
   try {
-    const studentId = req.body.student;
-
     const already = await Attendance.find({
-      student: studentId,
+      student: req.body.student,
       day: moment().format("L"),
     });
 
     if (already.length === 0) {
       const attendance = new Attendance({
-        student: studentId,
+        student: req.body.student,
         admin: req.admin._id,
         day: moment().format("L"),
         isPresent: true,
@@ -35,4 +29,46 @@ const markAttendance = asyncHandler(async (req, res) => {
   }
 });
 
-export { markAttendance };
+const attendanceList = asyncHandler(async (req, res) => {
+  let filterOpt = { isPresent: true };
+  let popFilter = { path: "student" };
+  //console.log(req.body.query);
+  try {
+    var regex = /^[0-9]+$/;
+
+      if (req.body.query && !req.body.query.match(regex)) {
+        popFilter.match = {...popFilter.match, fullname: {
+          $regex: req.body.query,
+          $options: "i",
+        }}
+    } 
+      if (req.body.query && req.body.query.match(regex)) {
+      popFilter.match = {...popFilter.match, studentId:req.body.query}
+    } 
+    if (req.body.course) {
+      popFilter.match = {...popFilter.match, course:req.body.course}
+    }
+    if (req.body.year) {
+      popFilter.match = {...popFilter.match, year:req.body.year}
+    }
+    if (req.body.sem) {
+      popFilter.match = {...popFilter.match, sem:req.body.sem}
+    }
+    if (req.body.day) {
+      filterOpt.day = req.body.day
+    }
+    console.log(popFilter);
+
+    const attendance = await Attendance.find({...filterOpt}).populate(popFilter).exec()
+    const data = attendance.filter((att)=>  att.student !== null)
+
+    const count = data.length
+
+    res.status(200).json({ attendance:data, count });
+  } catch (error) {
+    res.status(400);
+    throw new Error(error);
+  }
+});
+
+export { markAttendance, attendanceList };
