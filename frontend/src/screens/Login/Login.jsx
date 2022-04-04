@@ -66,13 +66,18 @@ const Login = () => {
         }
       )
       .then((res) => {
-        if (adminInfo) {
+       
           dispatch({ type: ADMIN_SET_OTPDATA, payload: { email } });
           navigate("/otp");
-        }
+        
       })
       .catch((err) => {
         setMessage(err?.response?.data?.message);
+        if(err?.response?.data?.message === 'Otp has been already sent'){
+          dispatch({ type: ADMIN_SET_OTPDATA, payload: { email } });
+          navigate("/otp");
+        }
+
       });
   };
 

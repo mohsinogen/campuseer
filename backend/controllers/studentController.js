@@ -9,6 +9,7 @@ const serviceAccount = require("../../serviceAccountKey.json");
 
 const fireAdmin = firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(serviceAccount),
+  storageBucket: "gs://my-bucket-a9016.appspot.com",
 });
 const storageRef = fireAdmin
   .storage()
@@ -16,6 +17,7 @@ const storageRef = fireAdmin
 const __dirname = path.resolve();
 
 async function uploadFile(path, filename) {
+  console.log('file',path)
   return storageRef.upload(path, {
     public: true,
     destination: `campuseer/${filename}`,
@@ -54,7 +56,7 @@ const addStudent = asyncHandler(async (req, res) => {
     try {
       const count = await Student.countDocuments({});
 
-      const student = new Student({
+      const student = await new Student({
         admin: req.admin._id,
         fullname,
         firstname,
@@ -79,15 +81,18 @@ const addStudent = asyncHandler(async (req, res) => {
           },
         },
         function (err) {
-          if (err) throw err;
-          console.log(err);
+          if (err) {
+            console.log("err", err);
+            throw err;
+          }
         }
       );
 
       const file = await uploadFile(
-        path.join(__dirname, `/qrcodes/${student._id}.png`),
+        path.join(__dirname, `./qrcodes/${student._id}.png`),
         `${student._id}.png`
       );
+   
       student.qrcode = file[0].metadata.mediaLink;
       await student.save();
 
@@ -103,12 +108,12 @@ const addStudent = asyncHandler(async (req, res) => {
 const getStudent = asyncHandler(async (req, res) => {
   try {
     const student = await Student.findById(req.params.id);
-  if (student) {
-    res.status(200).json(student);
-  } else {
-    res.status(400);
-    throw new Error("No student found with given id");
-  }
+    if (student) {
+      res.status(200).json(student);
+    } else {
+      res.status(400);
+      throw new Error("No student found with given id");
+    }
   } catch (error) {
     res.status(400);
     throw new Error("No student found with given id");
@@ -119,8 +124,8 @@ const studentList = asyncHandler(async (req, res) => {
   let filterOpt = { isActive: true };
   //console.log(req.body.query);
   try {
-    var regex=/^[0-9]+$/;
-    
+    var regex = /^[0-9]+$/;
+
     if (req.body.query && !req.body.query.match(regex)) {
       filterOpt.$or = [
         {
@@ -128,8 +133,7 @@ const studentList = asyncHandler(async (req, res) => {
             $regex: req.body.query,
             $options: "i",
           },
-         
-        }
+        },
       ];
     }
     if (req.body.query && req.body.query.match(regex)) {
@@ -199,35 +203,35 @@ const updateStudent = asyncHandler(async (req, res) => {
     isSuspend,
   } = req.body;
 
- try {
-  const student = await Student.findById(req.params.id);
+  try {
+    const student = await Student.findById(req.params.id);
 
-  if (student) {
-    student.fullname = fullname;
-    student.firstname = firstname;
-    student.lastname = lastname;
-    student.course = course;
-    student.year = year;
-    student.sem = sem;
-    student.address = address;
-    student.pinCode = pincode;
-    student.nearestStation = nearstation;
-    if(gender === "male"){
-      student.isMale = true
-    }else if(gender === "female"){
-      student.isMale = false
+    if (student) {
+      student.fullname = fullname;
+      student.firstname = firstname;
+      student.lastname = lastname;
+      student.course = course;
+      student.year = year;
+      student.sem = sem;
+      student.address = address;
+      student.pinCode = pincode;
+      student.nearestStation = nearstation;
+      if (gender === "male") {
+        student.isMale = true;
+      } else if (gender === "female") {
+        student.isMale = false;
+      }
+      student.isSuspend = isSuspend;
+
+      const updatedStudent = await student.save();
+      res.status(200).json(updatedStudent);
+    } else {
+      res.status(404);
+      throw new Error("Student not found");
     }
-    student.isSuspend = isSuspend;
-
-    const updatedStudent = await student.save();
-    res.status(200).json(updatedStudent);
-  } else {
-    res.status(404);
-    throw new Error("Student not found");
+  } catch (error) {
+    console.log(error);
   }
- } catch (error) {
-  console.log(error);
- }
 });
 
 export { addStudent, getStudent, studentList, deleteStudent, updateStudent };

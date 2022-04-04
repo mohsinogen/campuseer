@@ -77,7 +77,7 @@ export const register = (name, email, password) => async (dispatch) => {
         payload: data,
       }) */
 
-    localStorage.setItem("adminInfo", JSON.stringify(data));
+    //localStorage.setItem("adminInfo", JSON.stringify(data));
   } catch (error) {
     dispatch({
       type: ADMIN_REGISTER_FAIL,

@@ -12,33 +12,34 @@ import moment from "moment";
 const authAdmin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
- try {
-  const admin = await Admin.findOne({ email });
-  
-  const otp = await Otp.findOne({ admin: admin._id });
-  
-   if (admin && (await admin.matchPassword(password))) {
-     if (otp.isVerified) {
-       res.status(201).json({
-         _id: admin._id,
-         name: admin.name,
-         email: admin.email,
-         isSuperAdmin: admin.isSuperAdmin,
-         token: generateToken(admin._id),
-         //otp: otp._id,
-       });
-     } else {
-       res.status(401);
-       throw new Error("Please verify your email");
-     }
-   } else {
-     res.status(401);
-     throw new Error("Invalid email or password");
-   } 
- } catch (error) {
-  res.status(401);
-  throw new Error("Something went wrong");
- }
+  try {
+    const admin = await Admin.findOne({ email });
+
+    if (admin && (await admin.matchPassword(password))) {
+      const otp = await Otp.findOne({ admin: admin._id });
+
+      if (otp.isVerified) {
+        res.status(201).json({
+          _id: admin._id,
+          name: admin.name,
+          email: admin.email,
+          isSuperAdmin: admin.isSuperAdmin,
+          token: generateToken(admin._id),
+          //otp: otp._id,
+        });
+      } else {
+        res.status(401);
+        throw new Error("Please verify your email");
+      }
+    } else {
+      res.status(401);
+      throw new Error("Invalid email or password");
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(401);
+    throw new Error(error);
+  }
 });
 
 // @desc    Register a new user
@@ -60,10 +61,14 @@ const registerAdmin = asyncHandler(async (req, res) => {
     password,
   });
 
+  await admin.save();
+
   const otp = await Otp.create({
     admin: admin._id,
     isVerified: false,
+    otp: generateFourDigitOtp(),
   });
+  await otp.save();
 
   var transporter = nodemailer.createTransport({
     service: "gmail",
@@ -89,13 +94,7 @@ const registerAdmin = asyncHandler(async (req, res) => {
   );
 
   if (admin) {
-    res.status(201).json({
-      _id: admin._id,
-      name: admin.name,
-      email: admin.email,
-      isSuperAdmin: admin.isSuperAdmin,
-      token: generateToken(admin._id),
-    });
+    res.status(201).json({});
   } else {
     res.status(400);
     throw new Error("Invalid user data");
@@ -107,28 +106,19 @@ const verifyOtp = asyncHandler(async (req, res) => {
   const admin = await Admin.findOne({ email });
   const otp = await Otp.findOne({ admin: admin._id });
   console.log("otp", otp.otp, userOtp);
-  const twoMinutesAgo = moment().subtract(7, "minutes");
+  const twoMinutesAgo = moment().subtract(2, "minutes");
 
   if (otp.isVerified) {
     res.status(400);
     throw new Error("Otp has been verified");
   } else {
-    if (
-      moment(moment(otp.updatedAt), "M/D/YYYY, H:mm:ss A").isAfter(
-        twoMinutesAgo
-      )
-    ) {
-      if (otp.otp !== userOtp) {
-        otp.isVerified = true;
-        await otp.save();
-        res.status(201).json("Otp has been verified");
-      } else {
-        res.status(400);
-        throw new Error("Otp is not correct");
-      }
+    if (otp.otp == userOtp) {
+      otp.isVerified = true;
+      await otp.save();
+      res.status(200).json("otp is correct");
     } else {
       res.status(400);
-      throw new Error("Otp has been expired");
+      throw new Error("Otp is not correct");
     }
   }
 });
@@ -138,14 +128,12 @@ const generateOtp = asyncHandler(async (req, res) => {
   const admin = await Admin.findOne({ email });
   const otp = await Otp.findOne({ admin: admin._id });
 
-  const twoMinutesAgo = moment().subtract(7, "minutes");
-  console.log(twoMinutesAgo);
+  const twoMinutesAgo = moment().subtract(2, "minutes");
   if (otp?.isVerified) {
     res.status(400);
     throw new Error("Otp has been verified");
-  }
-  if (
-    moment(moment(otp.updatedAt), "M/D/YYYY, H:mm:ss A").isAfter(twoMinutesAgo)
+  } else if (
+    moment(moment(otp.updatedAt), "M/D/YYYY, H:mm:ss A").isBefore(twoMinutesAgo)
   ) {
     res.status(400);
     throw new Error("Otp has been already sent");

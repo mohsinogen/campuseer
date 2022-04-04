@@ -145,11 +145,7 @@ const Otp = () => {
                         Enter a four digit One time password sent to your
                         registered email starting with <span className="fw-bold">{data?.email?.slice(0,6)}</span>
                       </p>
-                      <p className="text-center  ">
-                        if did't recieved email{" "}
-                        <span onClick={newOtpHandler} style={{cursor:"pointer",textDecoration:"underline"}} className="fw-bold">click here</span>{" "}for
-                        resend
-                      </p>
+                      
                     </CContainer>
                   
                  

@@ -11,7 +11,6 @@ const otpSchema = mongoose.Schema(
     otp: {
       type: Number,
       required: true,
-      default: generateFourDigitOtp(),
     },
     isVerified: {
       type: Boolean,
