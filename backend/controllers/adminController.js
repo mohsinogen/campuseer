@@ -18,7 +18,6 @@ const authAdmin = asyncHandler(async (req, res) => {
     if (admin && (await admin.matchPassword(password))) {
       const otp = await Otp.findOne({ admin: admin._id });
 
-      if (otp.isVerified) {
         res.status(201).json({
           _id: admin._id,
           name: admin.name,
@@ -27,10 +26,6 @@ const authAdmin = asyncHandler(async (req, res) => {
           token: generateToken(admin._id),
           //otp: otp._id,
         });
-      } else {
-        res.status(401);
-        throw new Error("Please verify your email");
-      }
     } else {
       res.status(401);
       throw new Error("Invalid email or password");

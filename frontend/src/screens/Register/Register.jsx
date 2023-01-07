@@ -40,7 +40,7 @@ const Register = ( ) => {
   useEffect(() => {
     if(registerInfo){
       dispatch({type:ADMIN_SET_OTPDATA,payload:{email}})
-      navigate("/otp")
+      navigate("/login")
     }
   }, [registerInfo]);
 

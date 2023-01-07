@@ -150,15 +150,6 @@ const Login = () => {
                           Login
                         </CButton>
                       </CCol>
-                      <CCol xs={6} className="text-right">
-                        <CButton
-                          onClick={verifyHandler}
-                          color="link"
-                          className="px-0"
-                        >
-                          verify your account
-                        </CButton>
-                      </CCol>
                     </CRow>
                   </CForm>
                   <CRow>
