@@ -4,7 +4,6 @@ import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import Home from "./Home/Home";
 import Login from "./Login/Login";
 import NotFound from "./NotFound/NotFound";
-import Otp from "./Otp/Otp";
 import ProtectedRoutes from "./ProtectedRoutes";
 import Register from "./Register/Register";
 import AddRecord from "./AddRecord/AddRecord";
@@ -70,7 +69,6 @@ const MainContainer = () => {
       />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/otp" element={<Otp />} />
       <Route path="/notfound" element={<NotFound />} />
       <Route path="*" exact={true} element={<Navigate to={"/notfound"} />} />
     </Routes>
