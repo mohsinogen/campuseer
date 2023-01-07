@@ -13,7 +13,6 @@ import store from "./redux/store";
 import Home from "./screens/Home/Home";
 import Navbar from "./components/Navbar/Navbar";
 import Sidebar from "./components/Sidebar/Sidebar";
-import Otp from "./screens/Otp/Otp";
 import MainContainer from "./screens/MainContainer";
 
 const App = () => {
