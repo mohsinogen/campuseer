@@ -16,7 +16,6 @@ const authAdmin = asyncHandler(async (req, res) => {
     const admin = await Admin.findOne({ email });
 
     if (admin && (await admin.matchPassword(password))) {
-      const otp = await Otp.findOne({ admin: admin._id });
 
         res.status(201).json({
           _id: admin._id,
@@ -57,36 +56,6 @@ const registerAdmin = asyncHandler(async (req, res) => {
   });
 
   await admin.save();
-
-  const otp = await Otp.create({
-    admin: admin._id,
-    isVerified: false,
-    otp: generateFourDigitOtp(),
-  });
-  await otp.save();
-
-  var transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: "mohsinogen@gmail.com",
-      pass: "namhaimohsin",
-    },
-  });
-
-  transporter.sendMail(
-    {
-      ...mailOptions,
-      text: `Hi,${admin.name} your verification code for campuseer is ${otp.otp}`,
-      to: admin.email,
-    },
-    function (error, info) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log("Email sent: " + info.response);
-      }
-    }
-  );
 
   if (admin) {
     res.status(201).json({});
